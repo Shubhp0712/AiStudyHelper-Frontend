@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../context/DarkModeContext';
+import { getUserStatistics, formatStatistics } from '../utils/statisticsService';
 
 const AuthenticatedHome = () => {
     const { currentUser } = useAuth();
     const { darkMode } = useDarkMode();
+    const [statistics, setStatistics] = useState({
+        studySessions: '0',
+        cardsCreated: '0',
+        quizScore: '0%',
+        studyStreak: '0 days'
+    });
+    const [loading, setLoading] = useState(true);
 
     const features = [
         {
@@ -83,11 +91,32 @@ const AuthenticatedHome = () => {
         }
     ];
 
+    // Fetch user statistics on component mount
+    useEffect(() => {
+        const fetchStatistics = async () => {
+            try {
+                setLoading(true);
+                const stats = await getUserStatistics();
+                const formattedStats = formatStatistics(stats);
+                setStatistics(formattedStats);
+            } catch (error) {
+                console.error('Error fetching statistics:', error);
+                // Keep default values on error
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (currentUser) {
+            fetchStatistics();
+        }
+    }, [currentUser]);
+
     const quickStats = [
-        { label: 'Study Sessions', value: '24', icon: '📚' },
-        { label: 'Cards Created', value: '156', icon: '🧠' },
-        { label: 'Quiz Score', value: '87%', icon: '🎯' },
-        { label: 'Study Streak', value: '7 days', icon: '🔥' }
+        { label: 'Study Sessions', value: loading ? '...' : statistics.studySessions, icon: '📚' },
+        { label: 'Cards Created', value: loading ? '...' : statistics.cardsCreated, icon: '🧠' },
+        { label: 'Quiz Score', value: loading ? '...' : statistics.quizScore, icon: '🎯' },
+        { label: 'Study Streak', value: loading ? '...' : statistics.studyStreak, icon: '🔥' }
     ];
 
     return (
@@ -118,8 +147,8 @@ const AuthenticatedHome = () => {
                                     <div
                                         key={index}
                                         className={`p-6 rounded-2xl transition-all duration-300 hover:scale-105 ${darkMode
-                                                ? 'bg-gray-800/50 backdrop-blur-sm'
-                                                : 'bg-white/80 backdrop-blur-sm'
+                                            ? 'bg-gray-800/50 backdrop-blur-sm'
+                                            : 'bg-white/80 backdrop-blur-sm'
                                             } shadow-lg`}
                                     >
                                         <div className="text-3xl mb-2">{stat.icon}</div>
@@ -157,8 +186,8 @@ const AuthenticatedHome = () => {
                                 key={index}
                                 to={feature.link}
                                 className={`group p-8 rounded-2xl transition-all duration-300 hover:scale-105 transform ${darkMode
-                                        ? 'bg-gray-800 hover:bg-gray-700 shadow-lg hover:shadow-2xl'
-                                        : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-2xl'
+                                    ? 'bg-gray-800 hover:bg-gray-700 shadow-lg hover:shadow-2xl'
+                                    : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-2xl'
                                     }`}
                             >
                                 <div className={`text-${feature.color}-600 mb-6 group-hover:scale-110 transition-transform duration-300`}>
@@ -204,8 +233,8 @@ const AuthenticatedHome = () => {
                             <Link
                                 to="/quiz"
                                 className={`inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300 ${darkMode
-                                        ? 'text-gray-300 border-2 border-gray-600 hover:border-gray-500 hover:text-white'
-                                        : 'text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:text-gray-900'
+                                    ? 'text-gray-300 border-2 border-gray-600 hover:border-gray-500 hover:text-white'
+                                    : 'text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:text-gray-900'
                                     }`}
                             >
                                 Take a Quiz

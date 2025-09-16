@@ -95,10 +95,10 @@ const ProgressDashboard = () => {
             {/* Stats Overview */}
             <div className="stats-grid">
                 <div className="stat-card">
-                    <div className="stat-icon">🧠</div>
+                    <div className="stat-icon">📚</div>
                     <div className="stat-content">
-                        <h3>{progress?.stats?.totalFlashcardsLearned || 0}</h3>
-                        <p>Flashcards Learned</p>
+                        <h3>{progress?.stats?.totalFlashcardsCreated || 0}</h3>
+                        <p>Flashcards Created</p>
                     </div>
                 </div>
 
@@ -115,14 +115,6 @@ const ProgressDashboard = () => {
                     <div className="stat-content">
                         <h3>{Math.round(progress?.stats?.averageQuizScore || 0)}%</h3>
                         <p>Average Score</p>
-                    </div>
-                </div>
-
-                <div className="stat-card">
-                    <div className="stat-icon">⏱️</div>
-                    <div className="stat-content">
-                        <h3>{formatTime(progress?.stats?.totalStudyTime || 0)}</h3>
-                        <p>Study Time</p>
                     </div>
                 </div>
 

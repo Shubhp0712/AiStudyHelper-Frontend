@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../context/DarkModeContext';
 import ProfessionalFooter from '../components/ProfessionalFooter';
+import { getUserStatistics, formatStatistics } from '../utils/statisticsService';
 
 const AuthenticatedHome = () => {
     const { currentUser } = useAuth();
     const { darkMode } = useDarkMode();
+    const [statistics, setStatistics] = useState({
+        studySessions: '0',
+        cardsCreated: '0',
+        quizScore: '0%',
+        studyStreak: '0 days'
+    });
+    const [loading, setLoading] = useState(true);
 
     const features = [
         {
@@ -84,11 +92,32 @@ const AuthenticatedHome = () => {
         }
     ];
 
+    // Fetch user statistics on component mount
+    useEffect(() => {
+        const fetchStatistics = async () => {
+            try {
+                setLoading(true);
+                const stats = await getUserStatistics();
+                const formattedStats = formatStatistics(stats);
+                setStatistics(formattedStats);
+            } catch (error) {
+                console.error('Error fetching statistics:', error);
+                // Keep default values on error
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (currentUser) {
+            fetchStatistics();
+        }
+    }, [currentUser]);
+
     const quickStats = [
-        { label: 'Study Sessions', value: '24', icon: '📚' },
-        { label: 'Cards Created', value: '156', icon: '🧠' },
-        { label: 'Quiz Score', value: '87%', icon: '🎯' },
-        { label: 'Study Streak', value: '7 days', icon: '🔥' }
+        { label: 'Study Sessions', value: loading ? '...' : statistics.studySessions, icon: '📚' },
+        { label: 'Cards Created', value: loading ? '...' : statistics.cardsCreated, icon: '🧠' },
+        { label: 'Quiz Score', value: loading ? '...' : statistics.quizScore, icon: '🎯' },
+        { label: 'Study Streak', value: loading ? '...' : statistics.studyStreak, icon: '🔥' }
     ];
 
     return (

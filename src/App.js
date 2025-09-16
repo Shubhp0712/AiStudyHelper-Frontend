@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { DarkModeProvider } from "./context/DarkModeContext";
+import { SidebarProvider } from "./context/SidebarContext";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -11,9 +12,13 @@ import AuthenticatedHome from "./pages/AuthenticatedHome";
 import PrivateRoute from "./components/PrivateRoute";
 import FlashcardsPage from "./pages/FlashcardsPage";
 import FlashcardHistory from "./pages/FlashcardHistory";
+import StudyHistory from "./pages/StudyHistory";
 import QuizPage from "./pages/QuizPage";
 import ProgressPage from "./pages/ProgressPage";
 import Profile from "./pages/Profile";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Component to handle redirecting logged-in users
 const HomeRedirect = () => {
@@ -34,6 +39,7 @@ function AppRoutes() {
         <Route path="/" element={<HomeRedirect />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Routes */}
         <Route
@@ -69,6 +75,14 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/history"
+          element={
+            <PrivateRoute>
+              <StudyHistory />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/quiz"
           element={
             <PrivateRoute>
@@ -92,6 +106,8 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
       </Routes>
     </Router>
   );
@@ -101,7 +117,9 @@ function App() {
   return (
     <DarkModeProvider>
       <AuthProvider>
-        <AppRoutes />
+        <SidebarProvider>
+          <AppRoutes />
+        </SidebarProvider>
       </AuthProvider>
     </DarkModeProvider>
   );

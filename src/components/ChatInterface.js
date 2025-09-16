@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useDarkMode } from "../context/DarkModeContext";
+import { useSidebar } from "../context/SidebarContext";
 import { Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import { createFlashcards } from "../utils/flashcardService";
@@ -19,8 +20,12 @@ export default function ChatInterface() {
     const [flashcardLoading, setFlashcardLoading] = useState(null); // Track which message is generating flashcards
     const { currentUser, logout } = useAuth();
     const { darkMode } = useDarkMode();
+    const { isMainSidebarOpen } = useSidebar();
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+
+    // Hide ChatInterface sidebar when main sidebar is open
+    const shouldShowSidebar = sidebarOpen && !isMainSidebarOpen;
 
     // Load chat history from MongoDB on component mount
     useEffect(() => {
@@ -279,10 +284,18 @@ export default function ChatInterface() {
 
     return (
         <div className="flex h-full max-h-screen overflow-hidden bg-gray-50 dark:bg-gray-900 relative">
-            {/* Sidebar Toggle - Always visible */}
+            {/* Mobile Overlay Backdrop */}
+            {shouldShowSidebar && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
+            {/* Sidebar Toggle - Position below header to avoid overlap */}
             <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`fixed top-3 sm:top-4 left-3 sm:left-4 z-50 p-2 ${darkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 border-gray-600' : 'bg-white hover:bg-gray-100 text-gray-600 border-gray-300'} rounded-lg transition-colors border shadow-lg`}
+                className={`fixed top-20 left-3 md:top-4 md:left-4 z-50 p-2 ${darkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 border-gray-600' : 'bg-white hover:bg-gray-100 text-gray-600 border-gray-300'} rounded-lg transition-colors border shadow-lg ${isMainSidebarOpen ? 'hidden' : ''}`}
                 title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,11 +304,20 @@ export default function ChatInterface() {
             </button>
 
             {/* Chat History Sidebar */}
-            <div className={`${sidebarOpen ? 'w-80 max-w-[80vw] sm:max-w-none' : 'w-0'} transition-all duration-300 overflow-hidden bg-gray-900 text-white flex flex-col z-30`}>
+            <div className={`${shouldShowSidebar ? 'w-80 translate-x-0' : 'w-80 -translate-x-full'} ${shouldShowSidebar ? 'md:w-80' : 'md:w-0'} md:translate-x-0 fixed md:relative h-full transition-all duration-300 overflow-hidden ${darkMode ? 'bg-gray-950' : 'bg-gray-900'} text-white flex flex-col z-50 md:z-30`}>
                 {/* Sidebar Header */}
-                <div className="p-4 border-b border-gray-700 flex-shrink-0 pt-16 sm:pt-20">
+                <div className="p-4 border-b border-gray-700 flex-shrink-0 pt-4 md:pt-16">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-semibold">Chat History</h2>
+                        {/* Close button for mobile */}
+                        <button
+                            onClick={() => setSidebarOpen(false)}
+                            className="md:hidden p-1 hover:bg-gray-700 rounded transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
 
                     {/* New Chat Button */}
@@ -361,12 +383,12 @@ export default function ChatInterface() {
             </div>
 
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 md:ml-0 h-full max-h-screen overflow-hidden">
                 {/* Chat Messages Area */}
                 <div className={`flex-1 overflow-y-auto ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-                    <div className="h-full">
+                    <div className="min-h-full pb-32">
                         {messages.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-full text-center p-6">
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
                                 <div className={`w-16 h-16 ${darkMode ? 'bg-blue-900' : 'bg-blue-100'} rounded-full flex items-center justify-center mb-4`}>
                                     <svg className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -408,7 +430,7 @@ export default function ChatInterface() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-4 sm:p-6 pb-4 space-y-6 max-w-4xl mx-auto">
+                            <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
                                 {messages.map((msg, i) => (
                                     <div key={i} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                                         <div className={`flex gap-3 max-w-[85%] sm:max-w-[80%] ${msg.sender === "user" ? "flex-row-reverse" : ""}`}>
@@ -516,7 +538,7 @@ export default function ChatInterface() {
                 </div>
 
                 {/* Fixed Input Area */}
-                <div className={`flex-shrink-0 border-t ${darkMode ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'} p-3 sm:p-4`}>
+                <div className={`sticky bottom-0 ${darkMode ? 'bg-gray-900' : 'bg-white'} border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} p-3 sm:p-4`}>
                     <div className="max-w-4xl mx-auto">
                         <form onSubmit={sendMessage}>
                             <div className="flex gap-2 sm:gap-3 items-end">

@@ -104,7 +104,7 @@ const AuthenticatedHome = () => {
                                 }`}>
                                 Welcome back,{' '}
                                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                    {currentUser?.name || 'Student'}
+                                    {(currentUser?.displayName?.split(' ')[0]) || 'Student'}
                                 </span>!
                             </h1>
                             <p className={`text-xl mb-8 max-w-3xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -119,8 +119,8 @@ const AuthenticatedHome = () => {
                                     <div
                                         key={index}
                                         className={`p-6 rounded-2xl transition-all duration-300 hover:scale-105 ${darkMode
-                                                ? 'bg-gray-800/50 backdrop-blur-sm'
-                                                : 'bg-white/80 backdrop-blur-sm'
+                                            ? 'bg-gray-800/50 backdrop-blur-sm'
+                                            : 'bg-white/80 backdrop-blur-sm'
                                             } shadow-lg`}
                                     >
                                         <div className="text-3xl mb-2">{stat.icon}</div>
@@ -158,8 +158,8 @@ const AuthenticatedHome = () => {
                                 key={index}
                                 to={feature.link}
                                 className={`group p-8 rounded-2xl transition-all duration-300 hover:scale-105 transform ${darkMode
-                                        ? 'bg-gray-800 hover:bg-gray-700 shadow-lg hover:shadow-2xl'
-                                        : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-2xl'
+                                    ? 'bg-gray-800 hover:bg-gray-700 shadow-lg hover:shadow-2xl'
+                                    : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-2xl'
                                     }`}
                             >
                                 <div className={`text-${feature.color}-600 mb-6 group-hover:scale-110 transition-transform duration-300`}>

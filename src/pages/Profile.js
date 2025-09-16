@@ -32,11 +32,41 @@ export default function Profile() {
     const { darkMode } = useDarkMode();
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
                 setDisplayName(currentUser.displayName || "");
                 setEmail(currentUser.email || "");
+
+                // If displayName is empty, try to fetch from backend database
+                if (!currentUser.displayName) {
+                    try {
+                        const token = await currentUser.getIdToken();
+                        const response = await fetch("http://localhost:5000/api/auth/profile", {
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.user && data.user.name) {
+                                setDisplayName(data.user.name);
+
+                                // Also update Firebase displayName for future use
+                                try {
+                                    await updateProfile(currentUser, {
+                                        displayName: data.user.name
+                                    });
+                                } catch (updateError) {
+                                    console.warn("Failed to update Firebase displayName:", updateError);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.warn("Failed to fetch profile from backend:", error);
+                    }
+                }
             } else {
                 navigate("/login");
             }
@@ -52,9 +82,31 @@ export default function Profile() {
         setSuccess("");
 
         try {
-            // Update display name
+            // Update display name in Firebase
             if (displayName !== user.displayName) {
                 await updateProfile(user, { displayName });
+            }
+
+            // Update display name in backend database
+            if (displayName !== (user.displayName || "")) {
+                try {
+                    const token = await user.getIdToken();
+                    const response = await fetch("http://localhost:5000/api/auth/profile", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ name: displayName })
+                    });
+
+                    if (!response.ok) {
+                        console.warn("Failed to update name in backend database");
+                    }
+                } catch (backendError) {
+                    console.warn("Backend update failed:", backendError);
+                    // Don't fail the whole operation if backend update fails
+                }
             }
 
             // Update email if changed

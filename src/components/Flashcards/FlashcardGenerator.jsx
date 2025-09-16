@@ -4,9 +4,11 @@ import { createFlashcards, getFlashcards, updateFlashcard, deleteFlashcard } fro
 import progressService from "../../utils/progressService";
 import FlashcardPDFExport from "../FlashcardPDFExport";
 import { useDarkMode } from "../../context/DarkModeContext";
+import { useAuth } from "../../context/AuthContext";
 
 const FlashcardGenerator = () => {
   const { darkMode } = useDarkMode();
+  const { currentUser } = useAuth();
   const [topic, setTopic] = useState("");
   const [flashcards, setFlashcards] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,19 +25,21 @@ const FlashcardGenerator = () => {
 
   // Load search history from localStorage on component mount
   useEffect(() => {
-    const savedHistory = localStorage.getItem('flashcard-search-history');
+    const userKey = currentUser?.uid || 'guest';
+    const savedHistory = localStorage.getItem(`flashcard-search-history_${userKey}`);
     if (savedHistory) {
       setSearchHistory(JSON.parse(savedHistory));
     }
-  }, []);
+  }, [currentUser]);
 
   // Save search history to localStorage
   const saveToHistory = (searchTopic) => {
+    const userKey = currentUser?.uid || 'guest';
     const newHistory = [searchTopic, ...searchHistory.filter(item => item.topic !== searchTopic)]
       .slice(0, 10); // Keep only last 10 searches
 
     setSearchHistory(newHistory);
-    localStorage.setItem('flashcard-search-history', JSON.stringify(newHistory));
+    localStorage.setItem(`flashcard-search-history_${userKey}`, JSON.stringify(newHistory));
   };
 
   // Load flashcards from history
@@ -72,8 +76,9 @@ const FlashcardGenerator = () => {
 
   // Clear search history
   const clearHistory = () => {
+    const userKey = currentUser?.uid || 'guest';
     setSearchHistory([]);
-    localStorage.removeItem('flashcard-search-history');
+    localStorage.removeItem(`flashcard-search-history_${userKey}`);
     setShowHistory(false);
   };
 
@@ -348,8 +353,8 @@ const FlashcardGenerator = () => {
               onChange={(e) => setTopic(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
               className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${darkMode
-                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                  : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                 }`}
               disabled={loading}
             />

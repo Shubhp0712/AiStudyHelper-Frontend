@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../context/DarkModeContext';
+import { useSidebar } from '../context/SidebarContext';
 import DarkModeToggle from './DarkModeToggle';
 
 const ProfessionalHeader = () => {
     const { currentUser, logout } = useAuth();
     const { darkMode } = useDarkMode();
+    const { setIsMainSidebarOpen } = useSidebar();
     const location = useLocation();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    // Sync main sidebar state with context
+    useEffect(() => {
+        setIsMainSidebarOpen(isMobileMenuOpen);
+    }, [isMobileMenuOpen, setIsMainSidebarOpen]);
 
     const handleLogout = async () => {
         try {
@@ -30,9 +37,9 @@ const ProfessionalHeader = () => {
 
     const navLinks = [
         { path: '/home', label: 'Home', icon: '🏠' },
-        { path: '/flashcards', label: 'Flashcards', icon: '🧠' },
+        { path: '/flashcards', label: 'Flashcards', icon: '💳' },
         { path: '/quiz', label: 'Quiz', icon: '❓' },
-        { path: '/history', label: 'History', icon: '📚' },
+        { path: '/history', label: 'History', icon: '�' },
         { path: '/progress', label: 'Progress', icon: '📊' },
         { path: '/profile', label: 'Profile', icon: '👤' },
     ];

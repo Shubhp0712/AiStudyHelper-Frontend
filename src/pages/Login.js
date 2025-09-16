@@ -91,6 +91,17 @@ export default function Login() {
             </div>
           </div>
 
+          <div className="flex items-center justify-between">
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
+
           {error && (
             <div className={`p-3 rounded-lg text-sm ${darkMode
               ? 'bg-red-900/50 border border-red-800 text-red-300'

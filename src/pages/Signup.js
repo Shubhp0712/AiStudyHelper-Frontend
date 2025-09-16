@@ -1,7 +1,7 @@
 // src/pages/Signup.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 import OTPVerification from "../components/OTPVerification";
@@ -61,7 +61,34 @@ export default function Signup() {
       // If OTP is verified, proceed with Firebase account creation
       setTimeout(async () => {
         try {
-          await createUserWithEmailAndPassword(auth, email, password);
+          // Create Firebase user
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          // Update the user's display name in Firebase
+          await updateProfile(user, {
+            displayName: name
+          });
+
+          // Create user record in your backend database
+          try {
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:5000/api/auth/createUserIfNotExist", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
+            });
+
+            if (!response.ok) {
+              console.warn("Failed to create user record in database, but signup was successful");
+            }
+          } catch (dbError) {
+            console.warn("Database user creation failed:", dbError);
+            // Don't block signup if database operation fails
+          }
+
           navigate("/home");
         } catch (firebaseError) {
           setOtpError("Account creation failed: " + firebaseError.message);

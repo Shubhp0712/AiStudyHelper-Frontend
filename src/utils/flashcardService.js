@@ -27,21 +27,43 @@ export const getFlashcards = async () => {
   return { flashcards: res.data }; // Wrap in flashcards array for compatibility
 };
 
-export const updateFlashcard = async (id, topic, flashcards) => {
-  const token = await getAuthToken();
-  const res = await axios.put(
-    `${API_URL}/${id}`,
-    { topic, flashcards },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return res.data;
+export const updateFlashcard = async (id, data) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
+    console.log('Updating flashcard with ID:', id, 'Data:', data);
+
+    const res = await axios.put(
+      `${API_URL}/${id}`,
+      data,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Update flashcard error:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const deleteFlashcard = async (id) => {
-  const token = await getAuthToken();
-  const res = await axios.delete(
-    `${API_URL}/${id}`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return res.data;
+  try {
+    const token = await getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
+    console.log('Deleting flashcard with ID:', id);
+
+    const res = await axios.delete(
+      `${API_URL}/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Delete flashcard error:', error.response?.data || error.message);
+    throw error;
+  }
 };

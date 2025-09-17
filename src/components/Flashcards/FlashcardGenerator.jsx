@@ -106,7 +106,7 @@ const FlashcardGenerator = () => {
 
       // Update in database if we have a current set ID
       if (currentFlashcardSetId) {
-        await updateFlashcard(currentFlashcardSetId, topic, updatedFlashcards);
+        await updateFlashcard(currentFlashcardSetId, { topic, flashcards: updatedFlashcards });
       }
 
       setFlashcards(updatedFlashcards);
@@ -147,7 +147,7 @@ const FlashcardGenerator = () => {
       } else {
         // Update the set with remaining cards
         if (currentFlashcardSetId) {
-          await updateFlashcard(currentFlashcardSetId, topic, updatedFlashcards);
+          await updateFlashcard(currentFlashcardSetId, { topic, flashcards: updatedFlashcards });
         }
         setFlashcards(updatedFlashcards);
 

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Layout from "../components/Layout";
 import { useDarkMode } from "../context/DarkModeContext";
 import { getFlashcards, updateFlashcard, deleteFlashcard } from "../utils/flashcardService";
+import '../components/CustomToast.css';
 
 const FlashcardHistory = () => {
     const { darkMode } = useDarkMode();
@@ -18,6 +19,10 @@ const FlashcardHistory = () => {
     const [editQuestion, setEditQuestion] = useState("");
     const [editAnswer, setEditAnswer] = useState("");
     const [showEditModal, setShowEditModal] = useState(false);
+
+    // Confirmation state for deletions
+    const [pendingDelete, setPendingDelete] = useState(null);
+    const [pendingSetDelete, setPendingSetDelete] = useState(null);
 
     useEffect(() => {
         fetchHistoryData();
@@ -131,11 +136,39 @@ const FlashcardHistory = () => {
     };
 
     const deleteCard = async (index) => {
-        if (!window.confirm("Are you sure you want to delete this flashcard?")) {
-            return;
-        }
+        // Show confirmation toast
+        setPendingDelete(index);
+        toast.warn(
+            <div>
+                <div className="font-medium mb-2">Delete this flashcard?</div>
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => confirmDeleteCard(index)}
+                        className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+                    >
+                        Delete
+                    </button>
+                    <button
+                        onClick={() => cancelDelete()}
+                        className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>,
+            {
+                autoClose: false,
+                closeButton: false,
+                className: 'toast-confirmation',
+            }
+        );
+    };
 
+    const confirmDeleteCard = async (index) => {
         try {
+            toast.dismiss(); // Close the confirmation toast
+            setPendingDelete(null);
+
             const updatedFlashcards = selectedFlashcards.filter((_, i) => i !== index);
 
             if (updatedFlashcards.length === 0) {
@@ -144,6 +177,11 @@ const FlashcardHistory = () => {
                 const updatedHistoryData = historyData.filter(item => item._id !== selectedTopic._id);
                 setHistoryData(updatedHistoryData);
                 backToHistory();
+                toast.success("Flashcard set deleted successfully!", {
+                    icon: '🗂️',
+                    className: 'toast-flashcard-success',
+                    autoClose: 3000,
+                });
             } else {
                 // Update the flashcard set
                 await updateFlashcard(selectedTopic._id, {
@@ -178,12 +216,46 @@ const FlashcardHistory = () => {
         }
     };
 
-    const deleteEntireSet = async (setId) => {
-        if (!window.confirm("Are you sure you want to delete this entire flashcard set? This action cannot be undone.")) {
-            return;
-        }
+    const cancelDelete = () => {
+        toast.dismiss(); // Close the confirmation toast
+        setPendingDelete(null);
+    };
 
+    const deleteEntireSet = async (setId) => {
+        // Show confirmation toast
+        setPendingSetDelete(setId);
+        toast.warn(
+            <div>
+                <div className="font-medium mb-2">Delete this entire flashcard set?</div>
+                <div className="text-sm text-gray-600 mb-3">This action cannot be undone.</div>
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => confirmDeleteSet(setId)}
+                        className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+                    >
+                        Delete Set
+                    </button>
+                    <button
+                        onClick={() => cancelSetDelete()}
+                        className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>,
+            {
+                autoClose: false,
+                closeButton: false,
+                className: 'toast-confirmation',
+            }
+        );
+    };
+
+    const confirmDeleteSet = async (setId) => {
         try {
+            toast.dismiss(); // Close the confirmation toast
+            setPendingSetDelete(null);
+
             await deleteFlashcard(setId);
             const updatedHistoryData = historyData.filter(item => item._id !== setId);
             setHistoryData(updatedHistoryData);
@@ -204,6 +276,11 @@ const FlashcardHistory = () => {
                 autoClose: 4000,
             });
         }
+    };
+
+    const cancelSetDelete = () => {
+        toast.dismiss(); // Close the confirmation toast
+        setPendingSetDelete(null);
     };
 
     return (

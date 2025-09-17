@@ -4,6 +4,7 @@ import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
+import { toast } from 'react-toastify';
 import OTPVerification from "../components/OTPVerification";
 import { otpService } from "../utils/otpService";
 
@@ -40,9 +41,18 @@ export default function Signup() {
     try {
       // First, send OTP for email verification
       await otpService.sendOTP(email);
+      toast.success("Verification code sent to your email!", {
+        icon: '📧',
+        className: 'toast-auth-success',
+        autoClose: 3000,
+      });
       setStep("otp");
     } catch (error) {
       setError(error.message);
+      toast.error("Failed to send verification code. Please try again.", {
+        className: 'toast-auth-error',
+        autoClose: 4000,
+      });
     } finally {
       setLoading(false);
     }
@@ -57,6 +67,11 @@ export default function Signup() {
       // Verify OTP first
       await otpService.verifyOTP(email, otp);
       setOtpSuccess("Email verified successfully!");
+      toast.success("Email verified successfully!", {
+        icon: '✅',
+        className: 'toast-auth-success',
+        autoClose: 2000,
+      });
 
       // If OTP is verified, proceed with Firebase account creation
       setTimeout(async () => {
@@ -89,15 +104,28 @@ export default function Signup() {
             // Don't block signup if database operation fails
           }
 
+          toast.success("Account created successfully! Welcome aboard!", {
+            icon: '🎉',
+            className: 'toast-auth-success',
+            autoClose: 2000,
+          });
           navigate("/home");
         } catch (firebaseError) {
           setOtpError("Account creation failed: " + firebaseError.message);
           setOtpSuccess("");
+          toast.error("Account creation failed. Please try again.", {
+            className: 'toast-auth-error',
+            autoClose: 4000,
+          });
         }
       }, 1000);
 
     } catch (error) {
       setOtpError(error.message);
+      toast.error("Invalid verification code. Please try again.", {
+        className: 'toast-auth-error',
+        autoClose: 4000,
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -108,8 +136,17 @@ export default function Signup() {
       await otpService.resendOTP(email);
       setOtpSuccess("New verification code sent!");
       setOtpError("");
+      toast.success("New verification code sent to your email!", {
+        icon: '📧',
+        className: 'toast-auth-success',
+        autoClose: 3000,
+      });
     } catch (error) {
       setOtpError(error.message);
+      toast.error("Failed to resend verification code.", {
+        className: 'toast-auth-error',
+        autoClose: 4000,
+      });
     }
   };
 

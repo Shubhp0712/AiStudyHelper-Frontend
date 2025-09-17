@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
 import Layout from "../components/Layout";
 import { useDarkMode } from "../context/DarkModeContext";
 import { getFlashcards, updateFlashcard, deleteFlashcard } from "../utils/flashcardService";
@@ -109,9 +110,16 @@ const FlashcardHistory = () => {
             setHistoryData(updatedHistoryData);
 
             cancelEdit();
+            toast.success("Flashcard updated successfully!", {
+                icon: '✏️',
+                className: 'toast-flashcard-success',
+                autoClose: 3000,
+            });
         } catch (err) {
             console.error("Error updating flashcard:", err);
-            alert("Error updating flashcard. Please try again.");
+            toast.error("Error updating flashcard. Please try again.", {
+                autoClose: 4000,
+            });
         }
     };
 
@@ -155,10 +163,18 @@ const FlashcardHistory = () => {
 
                 // Reset flipped cards to avoid index issues
                 setFlippedCards(new Set());
+
+                toast.success("Flashcard deleted successfully!", {
+                    icon: '🗑️',
+                    className: 'toast-flashcard-success',
+                    autoClose: 3000,
+                });
             }
         } catch (err) {
             console.error("Error deleting flashcard:", err);
-            alert("Error deleting flashcard. Please try again.");
+            toast.error("Error deleting flashcard. Please try again.", {
+                autoClose: 4000,
+            });
         }
     };
 
@@ -176,9 +192,17 @@ const FlashcardHistory = () => {
             if (selectedTopic && selectedTopic._id === setId) {
                 backToHistory();
             }
+
+            toast.success("Flashcard set deleted successfully!", {
+                icon: '🗂️',
+                className: 'toast-flashcard-success',
+                autoClose: 3000,
+            });
         } catch (err) {
             console.error("Error deleting flashcard set:", err);
-            alert("Error deleting flashcard set. Please try again.");
+            toast.error("Error deleting flashcard set. Please try again.", {
+                autoClose: 4000,
+            });
         }
     };
 
@@ -442,8 +466,8 @@ const FlashcardHistory = () => {
                                     <button
                                         onClick={cancelEdit}
                                         className={`px-4 py-2 border rounded-lg transition-colors ${darkMode
-                                                ? 'text-gray-300 border-gray-600 hover:bg-gray-700'
-                                                : 'text-gray-600 border-gray-300 hover:bg-gray-50'
+                                            ? 'text-gray-300 border-gray-600 hover:bg-gray-700'
+                                            : 'text-gray-600 border-gray-300 hover:bg-gray-50'
                                             }`}
                                     >
                                         Cancel

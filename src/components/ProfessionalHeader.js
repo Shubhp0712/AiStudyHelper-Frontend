@@ -125,6 +125,43 @@ const ProfessionalHeader = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center space-x-1 sm:space-x-2">
+                                    {/* Mobile Menu Button for unauthenticated users */}
+                                    <button
+                                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                        className={`sm:hidden p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${darkMode
+                                            ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                        </svg>
+                                    </button>
+                                    {/* Public Navigation Links */}
+                                    <div className="hidden sm:flex items-center space-x-1">
+                                        <Link
+                                            to="/about"
+                                            className={`px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 ${isActivePage('/about')
+                                                    ? 'text-blue-600 bg-blue-50'
+                                                    : darkMode
+                                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            About
+                                        </Link>
+                                        <Link
+                                            to="/contact"
+                                            className={`px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 ${isActivePage('/contact')
+                                                    ? 'text-blue-600 bg-blue-50'
+                                                    : darkMode
+                                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            Contact
+                                        </Link>
+                                    </div>
                                     <Link
                                         to="/login"
                                         className={`px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 ${darkMode
@@ -225,6 +262,120 @@ const ProfessionalHeader = () => {
                                 </svg>
                                 <span>Logout</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Mobile Menu for Unauthenticated Users */}
+            {!currentUser && isMobileMenuOpen && (
+                <div className="fixed inset-0 z-50 sm:hidden">
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+                        onClick={closeMobileMenu}
+                    ></div>
+
+                    {/* Sidebar */}
+                    <div className={`fixed inset-y-0 left-0 w-64 transform transition-transform duration-300 ease-in-out ${darkMode ? 'bg-gray-900' : 'bg-white'
+                        } shadow-xl`}>
+                        {/* Sidebar Header */}
+                        <div className={`flex items-center justify-between p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'
+                            }`}>
+                            <div className="flex items-center space-x-3 min-w-0 flex-1">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm flex-shrink-0 ${darkMode ? 'bg-gradient-to-br from-blue-500 to-purple-600' : 'bg-gradient-to-br from-blue-600 to-purple-700'
+                                    }`}>
+                                    AI
+                                </div>
+                                <span className={`text-lg font-bold truncate ${darkMode ? 'text-white' : 'text-gray-900'
+                                    }`}>
+                                    AiStudyHelper
+                                </span>
+                            </div>
+                            <button
+                                onClick={closeMobileMenu}
+                                className={`p-2 rounded-lg transition-all duration-200 flex-shrink-0 ${darkMode
+                                    ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                    }`}
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Sidebar Navigation */}
+                        <nav className="flex-1 px-4 py-6 space-y-2">
+                            <Link
+                                to="/"
+                                onClick={closeMobileMenu}
+                                className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${isActivePage('/')
+                                    ? darkMode
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'bg-blue-600 text-white shadow-lg'
+                                    : darkMode
+                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                    }`}
+                            >
+                                <span className="text-xl">🏠</span>
+                                <span>Home</span>
+                            </Link>
+                            <Link
+                                to="/about"
+                                onClick={closeMobileMenu}
+                                className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${isActivePage('/about')
+                                    ? darkMode
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'bg-blue-600 text-white shadow-lg'
+                                    : darkMode
+                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                    }`}
+                            >
+                                <span className="text-xl">ℹ️</span>
+                                <span>About</span>
+                            </Link>
+                            <Link
+                                to="/contact"
+                                onClick={closeMobileMenu}
+                                className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${isActivePage('/contact')
+                                    ? darkMode
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'bg-blue-600 text-white shadow-lg'
+                                    : darkMode
+                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                    }`}
+                            >
+                                <span className="text-xl">📧</span>
+                                <span>Contact</span>
+                            </Link>
+                        </nav>
+
+                        {/* Sidebar Footer */}
+                        <div className={`p-4 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'
+                            }`}>
+                            <div className="space-y-2">
+                                <Link
+                                    to="/login"
+                                    onClick={closeMobileMenu}
+                                    className={`w-full flex items-center justify-center px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${darkMode
+                                        ? 'text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-600'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-300'
+                                        }`}
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    to="/signup"
+                                    onClick={closeMobileMenu}
+                                    className="w-full flex items-center justify-center px-4 py-3 rounded-lg text-base font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                                >
+                                    Sign Up
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

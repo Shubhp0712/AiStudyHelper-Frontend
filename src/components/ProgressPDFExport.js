@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-toastify';
 import pdfExportService from "./pdfExportService";
 
 const ProgressPDFExport = ({ progress, analytics }) => {
@@ -6,17 +7,26 @@ const ProgressPDFExport = ({ progress, analytics }) => {
 
     const handleExport = async () => {
         if (!progress || !analytics) {
-            alert('No progress data to export!');
+            toast.error('No progress data to export!');
             return;
         }
 
         try {
             setExporting(true);
             await pdfExportService.exportProgressToPDF(progress, analytics);
-            alert('✅ Progress report exported to PDF successfully!');
+            toast.success('Progress report exported to PDF successfully!', {
+                icon: '📄',
+                className: 'toast-pdf-success',
+                progressClassName: 'toast-progress-success',
+                autoClose: 4000,
+            });
         } catch (error) {
             console.error('Error exporting progress to PDF:', error);
-            alert('❌ Failed to export progress report. Please try again.');
+            toast.error('Failed to export progress report. Please try again.', {
+                className: 'toast-pdf-error',
+                progressClassName: 'toast-progress-error',
+                autoClose: 5000,
+            });
         } finally {
             setExporting(false);
         }
@@ -27,8 +37,8 @@ const ProgressPDFExport = ({ progress, analytics }) => {
             onClick={handleExport}
             disabled={exporting || !progress || !analytics}
             className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${exporting || !progress || !analytics
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                 }`}
             title="Export progress report as PDF"
         >

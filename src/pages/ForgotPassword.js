@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDarkMode } from '../context/DarkModeContext';
 
 const ForgotPassword = () => {
@@ -32,9 +33,18 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         setSuccess('OTP sent to your email address');
+        toast.success('Password reset code sent to your email!', {
+          icon: '📧',
+          className: 'toast-auth-success',
+          autoClose: 3000,
+        });
         setStep(2);
       } else {
         setError(data.error || 'Failed to send OTP');
+        toast.error('Failed to send password reset code. Please try again.', {
+          className: 'toast-auth-error',
+          autoClose: 4000,
+        });
       }
     } catch (error) {
       setError('Network error. Please try again.');
@@ -61,9 +71,18 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         setSuccess('OTP verified successfully');
+        toast.success('Code verified successfully!', {
+          icon: '✅',
+          className: 'toast-auth-success',
+          autoClose: 2000,
+        });
         setStep(3);
       } else {
         setError(data.error || 'Invalid OTP');
+        toast.error('Invalid verification code. Please try again.', {
+          className: 'toast-auth-error',
+          autoClose: 4000,
+        });
       }
     } catch (error) {
       setError('Network error. Please try again.');
@@ -102,11 +121,20 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         setSuccess('Password reset successfully! You can now login with your new password.');
+        toast.success('Password reset successfully! Redirecting to login...', {
+          icon: '🔑',
+          className: 'toast-auth-success',
+          autoClose: 3000,
+        });
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       } else {
         setError(data.error || 'Failed to reset password');
+        toast.error('Failed to reset password. Please try again.', {
+          className: 'toast-auth-error',
+          autoClose: 4000,
+        });
       }
     } catch (error) {
       setError('Network error. Please try again.');

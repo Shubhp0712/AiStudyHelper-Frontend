@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { SidebarProvider } from "./context/SidebarContext";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './components/CustomToast.css';
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -19,6 +22,8 @@ import Profile from "./pages/Profile";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ForgotPassword from "./pages/ForgotPassword";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 // Component to handle redirecting logged-in users
 const HomeRedirect = () => {
@@ -108,6 +113,8 @@ function AppRoutes() {
         />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </Router>
   );
@@ -119,6 +126,19 @@ function App() {
       <AuthProvider>
         <SidebarProvider>
           <AppRoutes />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            style={{ zIndex: 9999 }}
+          />
         </SidebarProvider>
       </AuthProvider>
     </DarkModeProvider>

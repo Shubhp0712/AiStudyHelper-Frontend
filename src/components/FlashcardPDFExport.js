@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-toastify';
 import pdfExportService from "./pdfExportService";
 
 const FlashcardPDFExport = ({ flashcards, topic }) => {
@@ -6,17 +7,26 @@ const FlashcardPDFExport = ({ flashcards, topic }) => {
 
     const handleExport = async () => {
         if (!flashcards || flashcards.length === 0) {
-            alert('No flashcards to export!');
+            toast.error('No flashcards to export!');
             return;
         }
 
         try {
             setExporting(true);
             await pdfExportService.exportFlashcardsToPDF(flashcards, topic || 'Study Material');
-            alert('✅ Flashcards exported to PDF successfully!');
+            toast.success('Flashcards exported to PDF successfully!', {
+                icon: '🗂️',
+                className: 'toast-pdf-success',
+                progressClassName: 'toast-progress-success',
+                autoClose: 4000,
+            });
         } catch (error) {
             console.error('Error exporting to PDF:', error);
-            alert('❌ Failed to export PDF. Please try again.');
+            toast.error('Failed to export flashcards PDF. Please try again.', {
+                className: 'toast-pdf-error',
+                progressClassName: 'toast-progress-error',
+                autoClose: 5000,
+            });
         } finally {
             setExporting(false);
         }

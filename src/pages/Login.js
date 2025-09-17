@@ -4,6 +4,7 @@ import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,9 +23,18 @@ export default function Login() {
       // Direct Firebase authentication - no OTP required for login
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in successfully");
+      toast.success("Welcome back! Login successful", {
+        icon: '🎉',
+        className: 'toast-auth-success',
+        autoClose: 2000,
+      });
       navigate("/home");
     } catch (error) {
       setError(error.message);
+      toast.error("Login failed. Please check your credentials.", {
+        className: 'toast-auth-error',
+        autoClose: 4000,
+      });
     } finally {
       setLoading(false);
     }

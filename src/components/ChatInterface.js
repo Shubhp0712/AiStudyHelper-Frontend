@@ -189,7 +189,8 @@ export default function ChatInterface() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/ask", {
+            // const res = await fetch("http://localhost:5000/api/ask", {
+                const res = await fetch("https://aistudyhelper-backend.onrender.com/api/ask", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

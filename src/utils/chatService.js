@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { auth } from '../firebaseConfig';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://aistudyhelper-backend.onrender.com/api';
 
 // Get auth token from Firebase
 const getAuthToken = async () => {

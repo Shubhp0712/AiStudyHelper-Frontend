@@ -88,7 +88,8 @@ export default function Signup() {
           // Create user record in your backend database
           try {
             const token = await user.getIdToken();
-            const response = await fetch("http://localhost:5000/api/auth/createUserIfNotExist", {
+            // const response = await fetch("http://localhost:5000/api/auth/createUserIfNotExist", {
+              const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/createUserIfNotExist", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

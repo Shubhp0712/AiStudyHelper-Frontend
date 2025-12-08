@@ -3,7 +3,8 @@ import { getFlashcards } from './flashcardService';
 import { getUserQuizzes } from './quizService';
 import progressService from './progressService';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+// const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://aistudyhelper-backend.onrender.com';
 
 /**
  * Get user statistics for dashboard

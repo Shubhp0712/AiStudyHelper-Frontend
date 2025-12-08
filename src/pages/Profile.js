@@ -42,7 +42,8 @@ export default function Profile() {
                 if (!currentUser.displayName) {
                     try {
                         const token = await currentUser.getIdToken();
-                        const response = await fetch("http://localhost:5000/api/auth/profile", {
+                        // const response = await fetch("http://localhost:5000/api/auth/profile", {
+                            const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
                             headers: {
                                 "Authorization": `Bearer ${token}`
                             }
@@ -91,7 +92,8 @@ export default function Profile() {
             if (displayName !== (user.displayName || "")) {
                 try {
                     const token = await user.getIdToken();
-                    const response = await fetch("http://localhost:5000/api/auth/profile", {
+                    // const response = await fetch("http://localhost:5000/api/auth/profile", {
+                        const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

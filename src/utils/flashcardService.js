@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 
-const API_URL = "http://localhost:5000/api/flashcards";
+// const API_URL = "http://localhost:5000/api/flashcards";
+const API_URL = "https://aistudyhelper-backend.onrender.com/api/flashcards";
 
 const getAuthToken = async () => {
   const auth = getAuth();

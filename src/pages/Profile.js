@@ -43,7 +43,7 @@ export default function Profile() {
                     try {
                         const token = await currentUser.getIdToken();
                         // const response = await fetch("http://localhost:5000/api/auth/profile", {
-                            const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
+                        const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
                             headers: {
                                 "Authorization": `Bearer ${token}`
                             }
@@ -93,7 +93,7 @@ export default function Profile() {
                 try {
                     const token = await user.getIdToken();
                     // const response = await fetch("http://localhost:5000/api/auth/profile", {
-                        const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
+                    const response = await fetch("https://aistudyhelper-backend.onrender.com/api/auth/profile", {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
@@ -121,9 +121,30 @@ export default function Profile() {
                 if (newPassword !== confirmPassword) {
                     throw new Error("New passwords do not match");
                 }
-                if (newPassword.length < 6) {
-                    throw new Error("Password must be at least 6 characters long");
+
+                // Validate strong password
+                const minLength = 8;
+                const hasUpperCase = /[A-Z]/.test(newPassword);
+                const hasLowerCase = /[a-z]/.test(newPassword);
+                const hasNumber = /[0-9]/.test(newPassword);
+                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+
+                if (newPassword.length < minLength) {
+                    throw new Error("Password must be at least 8 characters long");
                 }
+                if (!hasUpperCase) {
+                    throw new Error("Password must contain at least one uppercase letter");
+                }
+                if (!hasLowerCase) {
+                    throw new Error("Password must contain at least one lowercase letter");
+                }
+                if (!hasNumber) {
+                    throw new Error("Password must contain at least one number");
+                }
+                if (!hasSpecialChar) {
+                    throw new Error("Password must contain at least one special character (!@#$%^&*...)");
+                }
+
                 await updatePassword(user, newPassword);
             }
 
